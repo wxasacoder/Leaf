@@ -19,6 +19,7 @@ import org.apache.zookeeper.CreateMode;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -158,6 +159,7 @@ public class SnowflakeZookeeperHolder {
             }
             curator.setData().forPath(path, buildData().getBytes());
             lastUpdateTime = System.currentTimeMillis();
+            LOGGER.info("update init data success path is {} update time is {}", path, new Date(lastUpdateTime));
         } catch (Exception e) {
             LOGGER.info("update init data error path is {} error is {}", path, e);
         }
