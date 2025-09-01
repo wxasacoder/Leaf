@@ -76,6 +76,7 @@ public class SegmentIDGenImpl implements IDGen {
                 return t;
             }
         });
+        // 从db中更新并删除业务键
         service.scheduleWithFixedDelay(new Runnable() {
             @Override
             public void run() {
