@@ -1,6 +1,5 @@
 package com.sankuai.inf.leaf.server.service;
 
-import com.alibaba.druid.pool.DruidDataSource;
 import com.sankuai.inf.leaf.IDGen;
 import com.sankuai.inf.leaf.common.PropertyFactory;
 import com.sankuai.inf.leaf.common.Result;
@@ -10,6 +9,8 @@ import com.sankuai.inf.leaf.segment.dao.IDAllocDao;
 import com.sankuai.inf.leaf.segment.dao.impl.IDAllocDaoImpl;
 import com.sankuai.inf.leaf.server.Constants;
 import com.sankuai.inf.leaf.server.exception.InitException;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -22,18 +23,18 @@ public class SegmentService {
     private Logger logger = LoggerFactory.getLogger(SegmentService.class);
 
     private IDGen idGen;
-    private DruidDataSource dataSource;
+    private HikariDataSource dataSource;
 
     public SegmentService() throws SQLException, InitException {
         Properties properties = PropertyFactory.getProperties();
         boolean flag = Boolean.parseBoolean(properties.getProperty(Constants.LEAF_SEGMENT_ENABLE, "true"));
         if (flag) {
             // Config dataSource
-            dataSource = new DruidDataSource();
-            dataSource.setUrl(properties.getProperty(Constants.LEAF_JDBC_URL));
-            dataSource.setUsername(properties.getProperty(Constants.LEAF_JDBC_USERNAME));
-            dataSource.setPassword(properties.getProperty(Constants.LEAF_JDBC_PASSWORD));
-            dataSource.init();
+            HikariConfig hikariConfig = new HikariConfig();
+            hikariConfig.setJdbcUrl(properties.getProperty(Constants.LEAF_JDBC_URL));
+            hikariConfig.setUsername(properties.getProperty(Constants.LEAF_JDBC_USERNAME));
+            hikariConfig.setPassword(properties.getProperty(Constants.LEAF_JDBC_PASSWORD));
+            dataSource = new HikariDataSource(hikariConfig);
 
             // Config Dao
             IDAllocDao dao = new IDAllocDaoImpl(dataSource);

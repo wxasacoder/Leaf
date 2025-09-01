@@ -14,7 +14,7 @@
     <name>leaf-server</name>
     <description>Leaf HTTP Server</description>
     <properties>
-        <spring-boot-dependencies.version>1.5.18.RELEASE</spring-boot-dependencies.version>
+        <spring-boot-dependencies.version>3.2.4</spring-boot-dependencies.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -48,8 +48,8 @@
             <artifactId>leaf-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>druid</artifactId>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
         </dependency>
         <!--zk-->
         <dependency>
@@ -69,41 +69,33 @@
         </dependency>
     </dependencies>
     <build>
+        <finalName>ROOT</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring-boot-dependencies.version}</version>
                 <configuration>
-                    <mainClass>com.sankuai.inf.leaf.server.LeafServerApplication</mainClass>
+                    <includeSystemScope>true</includeSystemScope>
                 </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>repackage</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.0.2</version>
                 <executions>
                     <execution>
-                        <id>copy-dependencies</id>
-                        <phase>compile</phase>
+                        <phase>prepare-package</phase>
                         <goals>
                             <goal>copy-dependencies</goal>
                         </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
-                            <excludeTransitive>false</excludeTransitive>
-                            <!-- 表示复制的jar文件去掉版本信息 -->
-                            <stripVersion>false</stripVersion>
-                        </configuration>
                     </execution>
                 </executions>
+                <configuration>
+                    <includeScope>system</includeScope>
+                    <outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/lib</outputDirectory>
+                </configuration>
             </plugin>
-
         </plugins>
     </build>
 </project>
