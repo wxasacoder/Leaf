@@ -2,7 +2,7 @@ package com.sankuai.inf.leaf.snowflake;
 
 import com.google.common.base.Preconditions;
 import com.sankuai.inf.leaf.IDGen;
-import com.sankuai.inf.leaf.common.Result;
+import com.sankuai.inf.leaf.common.IdResult;
 import com.sankuai.inf.leaf.common.Status;
 import com.sankuai.inf.leaf.common.Utils;
 import org.slf4j.Logger;
@@ -37,8 +37,9 @@ public class SnowflakeIDGenImpl implements IDGen {
     private static final Random RANDOM = new Random();
 
     public SnowflakeIDGenImpl(String zkAddress, int port) {
-        //Thu Nov 04 2010 09:42:54 GMT+0800 (中国标准时间) 
-        this(zkAddress, port, 1288834974657L);
+        // Tue Sep 02 11:18:20 CST 2025
+        // 69年后需要重置起点
+        this(zkAddress, port, 1756783100599L);
     }
 
     /**
@@ -63,7 +64,7 @@ public class SnowflakeIDGenImpl implements IDGen {
     }
 
     @Override
-    public synchronized Result get(String key) {
+    public synchronized IdResult get(String key) {
         long timestamp = timeGen();
         if (timestamp < lastTimestamp) {
             long offset = lastTimestamp - timestamp;
@@ -72,14 +73,14 @@ public class SnowflakeIDGenImpl implements IDGen {
                     wait(offset << 1);
                     timestamp = timeGen();
                     if (timestamp < lastTimestamp) {
-                        return new Result(-1, Status.EXCEPTION);
+                        return new IdResult(-1, Status.EXCEPTION,"after wait but timestamp is less than last timestamp");
                     }
                 } catch (InterruptedException e) {
                     LOGGER.error("wait interrupted");
-                    return new Result(-2, Status.EXCEPTION);
+                    return new IdResult(-2, Status.EXCEPTION,"snowflake wait interrupted");
                 }
             } else {
-                return new Result(-3, Status.EXCEPTION);
+                return new IdResult(-3, Status.EXCEPTION, "timestamp is less than last timestamp more than 5ms");
             }
         }
         Long sequence = sequenceMap.getOrDefault(key,0L);
@@ -97,7 +98,7 @@ public class SnowflakeIDGenImpl implements IDGen {
         sequenceMap.put(key, sequence);
         lastTimestamp = timestamp;
         long id = ((timestamp - twepoch) << timestampLeftShift) | (workerId << workerIdShift) | sequence;
-        return new Result(id, Status.SUCCESS);
+        return new IdResult(id, Status.SUCCESS);
 
     }
 

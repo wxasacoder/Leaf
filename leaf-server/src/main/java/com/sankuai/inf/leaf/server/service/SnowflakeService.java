@@ -2,7 +2,7 @@ package com.sankuai.inf.leaf.server.service;
 
 import com.sankuai.inf.leaf.IDGen;
 import com.sankuai.inf.leaf.common.PropertyFactory;
-import com.sankuai.inf.leaf.common.Result;
+import com.sankuai.inf.leaf.common.IdResult;
 import com.sankuai.inf.leaf.common.ZeroIDGen;
 import com.sankuai.inf.leaf.server.Constants;
 import com.sankuai.inf.leaf.server.exception.InitException;
@@ -37,7 +37,7 @@ public class SnowflakeService {
         }
     }
 
-    public Result getId(String key) {
+    public IdResult getId(String key) {
         return idGen.get(key);
     }
 }

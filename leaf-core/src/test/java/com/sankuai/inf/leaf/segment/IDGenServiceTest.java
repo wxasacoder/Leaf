@@ -2,7 +2,7 @@ package com.sankuai.inf.leaf.segment;
 
 import com.sankuai.inf.leaf.IDGen;
 import com.sankuai.inf.leaf.common.PropertyFactory;
-import com.sankuai.inf.leaf.common.Result;
+import com.sankuai.inf.leaf.common.IdResult;
 import com.sankuai.inf.leaf.segment.dao.IDAllocDao;
 import com.sankuai.inf.leaf.segment.dao.impl.IDAllocDaoImpl;
 import com.zaxxer.hikari.HikariConfig;
@@ -11,8 +11,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.Properties;
 
 public class IDGenServiceTest {
@@ -41,7 +39,7 @@ public class IDGenServiceTest {
     @Test
     public void testGetId() {
         for (int i = 0; i < 100; ++i) {
-            Result r = idGen.get("leaf-segment-test");
+            IdResult r = idGen.get("leaf-segment-test");
             System.out.println(r);
         }
     }

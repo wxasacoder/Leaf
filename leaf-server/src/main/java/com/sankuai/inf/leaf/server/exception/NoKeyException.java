@@ -1,8 +1,19 @@
 package com.sankuai.inf.leaf.server.exception;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
-
-@ResponseStatus(code=HttpStatus.INTERNAL_SERVER_ERROR,reason="Key is none")
 public class NoKeyException extends RuntimeException {
+
+
+    private String errorCode;
+
+
+    public NoKeyException(String errorCode) {
+        super("key not fund in leaf, please init first");
+        this.errorCode = errorCode;
+    }
+
+    public String getErrorCode() {
+        return errorCode;
+    }
+
+
 }

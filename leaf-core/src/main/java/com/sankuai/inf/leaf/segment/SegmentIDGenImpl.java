@@ -1,7 +1,7 @@
 package com.sankuai.inf.leaf.segment;
 
 import com.sankuai.inf.leaf.IDGen;
-import com.sankuai.inf.leaf.common.Result;
+import com.sankuai.inf.leaf.common.IdResult;
 import com.sankuai.inf.leaf.common.Status;
 import com.sankuai.inf.leaf.segment.dao.IDAllocDao;
 import com.sankuai.inf.leaf.segment.model.*;
@@ -132,9 +132,9 @@ public class SegmentIDGenImpl implements IDGen {
     }
 
     @Override
-    public Result get(final String key) {
+    public IdResult get(final String key) {
         if (!initOK) {
-            return new Result(EXCEPTION_ID_IDCACHE_INIT_FALSE, Status.EXCEPTION);
+            return new IdResult(EXCEPTION_ID_IDCACHE_INIT_FALSE, Status.EXCEPTION, "init not done");
         }
         if (cache.containsKey(key)) {
             SegmentBuffer buffer = cache.get(key);
@@ -153,7 +153,7 @@ public class SegmentIDGenImpl implements IDGen {
             }
             return getIdFromSegmentBuffer(cache.get(key));
         }
-        return new Result(EXCEPTION_ID_KEY_NOT_EXISTS, Status.EXCEPTION);
+        return new IdResult(EXCEPTION_ID_KEY_NOT_EXISTS, Status.EXCEPTION, "key not exists");
     }
 
     public void updateSegmentFromDb(String key, Segment segment) {
@@ -200,7 +200,7 @@ public class SegmentIDGenImpl implements IDGen {
         sw.stop("updateSegmentFromDb", key + " " + segment);
     }
 
-    public Result getIdFromSegmentBuffer(final SegmentBuffer buffer) {
+    public IdResult getIdFromSegmentBuffer(final SegmentBuffer buffer) {
         while (true) {
             buffer.rLock().lock();
             try {
@@ -232,7 +232,7 @@ public class SegmentIDGenImpl implements IDGen {
                 }
                 long value = segment.getValue().getAndIncrement();
                 if (value < segment.getMax()) {
-                    return new Result(value, Status.SUCCESS);
+                    return new IdResult(value, Status.SUCCESS);
                 }
             } finally {
                 buffer.rLock().unlock();
@@ -243,14 +243,14 @@ public class SegmentIDGenImpl implements IDGen {
                 final Segment segment = buffer.getCurrent();
                 long value = segment.getValue().getAndIncrement();
                 if (value < segment.getMax()) {
-                    return new Result(value, Status.SUCCESS);
+                    return new IdResult(value, Status.SUCCESS);
                 }
                 if (buffer.isNextReady()) {
                     buffer.switchPos();
                     buffer.setNextReady(false);
                 } else {
                     logger.error("Both two segments in {} are not ready!", buffer);
-                    return new Result(EXCEPTION_ID_TWO_SEGMENTS_ARE_NULL, Status.EXCEPTION);
+                    return new IdResult(EXCEPTION_ID_TWO_SEGMENTS_ARE_NULL, Status.EXCEPTION, "both two segments are not ready");
                 }
             } finally {
                 buffer.wLock().unlock();

@@ -4,8 +4,8 @@ import com.sankuai.inf.leaf.IDGen;
 
 public class ZeroIDGen implements IDGen {
     @Override
-    public Result get(String key) {
-        return new Result(0, Status.SUCCESS);
+    public IdResult get(String key) {
+        return new IdResult(0, Status.SUCCESS);
     }
 
     @Override

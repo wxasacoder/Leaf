@@ -1,11 +1,16 @@
 package com.sankuai.inf.leaf.server.exception;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
-
-@ResponseStatus(code=HttpStatus.INTERNAL_SERVER_ERROR)
 public class LeafServerException extends RuntimeException {
-    public LeafServerException(String msg) {
-        super(msg);
+
+    private String errorCode;
+
+    public LeafServerException(String code, String message) {
+        super(message);
+        this.errorCode = code;
+    }
+
+
+    public String getErrorCode() {
+        return errorCode;
     }
 }
